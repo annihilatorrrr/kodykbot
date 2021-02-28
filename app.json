@@ -1,0 +1,30 @@
+{
+    "name": "KodyK Bot",
+    "description": "Just Another Telegram Bot Written In Python Using Pyrogram.",
+    "keywords": [
+      "telegram",
+      "pyrogram",
+      "kdk",
+      "kodyk",
+      "groupbot"
+    ],
+    "website": "https://github.com/Kody-K/kodykbot",
+    "repository": "https://github.com/Kody-K/kodykbot",
+    "env": {
+      "BOT_TOKEN": {
+        "description": "get this value from @BotFather",
+        "value": ""
+      }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "formation": {
+      "worker": {
+        "quantity": 1,
+        "size": "free"
+      }
+    }
+  }
