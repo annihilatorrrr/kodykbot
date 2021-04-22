@@ -4,3 +4,4 @@ pyjokes
 quoters
 youtube_dl
 wget
+howdoi

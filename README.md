@@ -4,7 +4,7 @@
 
 Just Another Telegram Bot Written In Python Using Pyrogram.
 
-## Features
+### Features
 ```
 Hello NoobCoder, these are some commands you can try with the BOT,
         
@@ -36,13 +36,18 @@ Hello NoobCoder, these are some commands you can try with the BOT,
 
 ```
 
-## Requirements
+### Requirements
 
 - Python 3.6 or higher.
 - A [Telegram API key](//docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](//t.me/botfather).
 
-## Installation
+### Deploy on Heroku
+[<img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" height="40"/>](https://heroku.com/deploy?template=https://github.com/Kody-K/kodykbot "Heroku")
+
+## OR
+
+### Manual Installation
 
 ```
 $ git clone https://github.com/Kody-K/kodykbot
@@ -50,15 +55,32 @@ $ cd kodykbot
 $ pip3 install -r requirements.txt
 ```
 
+Replace these lines in `config.py`: 
 
-Put your Bot Token in `config.py`
+```
+import os
+class Config(object):
+    # get a token from @BotFather
+    BOT_TOKEN = os.getenv("BOT_TOKEN")
+    API_HASH  = os.getenv("API_HASH")
+    API_ID    = os.getenv("API_ID")
+    SUDO_USERS_ID = os.getenv("SUDO_USERS_ID")
+    WELCOME_DELAY_KICK_SEC = os.getenv("WELCOME_DELAY_KICK_SEC")
+    OWNER_USER_ID = os.getenv("OWNER_USER_ID")
+```
 
-Put your `user_id` and `sudoers user_id` in sudoers.py
+with this:
 
-## Deploy button
-[<img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" height="40"/>](https://heroku.com/deploy?template=https://github.com/Kody-K/kodykbot "Heroku")
+```
+BOT_TOKEN = str("bot token here")
+API_HASH  = str("api hash here") 
+API_ID    = int(api_id_here)
+SUDO_USERS_ID = str("sudo users id here")
+WELCOME_DELAY_KICK_SEC = 300
+OWNER_USER_ID = int(your_user_id_here)
+```
 
-## Usage 
+#### Usage 
 
 ```
 $ python3 bot.py
