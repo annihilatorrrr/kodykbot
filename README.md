@@ -55,30 +55,7 @@ $ cd kodykbot
 $ pip3 install -r requirements.txt
 ```
 
-Replace these lines in `config.py`: 
-
-```
-import os
-class Config(object):
-    # get a token from @BotFather
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-    API_HASH  = os.getenv("API_HASH")
-    API_ID    = os.getenv("API_ID")
-    SUDO_USERS_ID = os.getenv("SUDO_USERS_ID")
-    WELCOME_DELAY_KICK_SEC = os.getenv("WELCOME_DELAY_KICK_SEC")
-    OWNER_USER_ID = os.getenv("OWNER_USER_ID")
-```
-
-with this:
-
-```
-BOT_TOKEN = str("bot token here")
-API_HASH  = str("api hash here") 
-API_ID    = int(api_id_here)
-SUDO_USERS_ID = str("sudo users id here")
-WELCOME_DELAY_KICK_SEC = 300
-OWNER_USER_ID = int(your_user_id_here)
-```
+Edit some code
 
 #### Usage 
 
