@@ -126,7 +126,7 @@ async def shutdown(_, message):
         await message.reply_text("You probably shouldn't do that")
 
 # /cancelshutdown
-@app.on_message(filters.command(['cancelshutdown']) & filters.me)
+@app.on_message(filters.command(['cancelshutdown']))
 async def cancelshutdown(_, message):
     if message.from_user.id == root:
         await message.reply_text("Shutting Down Servers Cancelled")
@@ -141,7 +141,7 @@ async def crackjoke(_, message):
     await message.reply_text(joke)
 
 # /homework
-@app.on_message(filters.command(["homework"]) & filters.me)
+@app.on_message(filters.command(["homework"]) & filters.user(root))
 async def homework(_, message):
     try:
         if not message.reply_to_message:
@@ -186,7 +186,7 @@ ydl_opts = {
     'writethumbnail': True
 }
 
-@app.on_message(filters.command(["dlmusic"]) & (filters.me | filters.user(sudoers)))
+@app.on_message(filters.command(["dlmusic"]) & (filters.user([sudoers + root])))
 async def music(_, message: Message):
       
     if len(message.command) != 2:
@@ -253,7 +253,7 @@ async def song(_, message: Message):
                               performer=ssingers)
 
 # /mute
-@app.on_message((filters.me | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
+@app.on_message((filters.user(root) | filters.user(sudoers)) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
 async def mute(_, message):    
     try:
         chat_id = message.chat.id
@@ -268,7 +268,7 @@ async def mute(_, message):
         await message.reply_text(str(e))
 
 # /unmute
-@app.on_message((filters.me | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
+@app.on_message((filters.user(root) | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
 async def unmute(_, message: Message):
     try:
         chat_id = message.chat.id
@@ -291,13 +291,13 @@ async def info(_, message):
         await message.reply_text(str(e))
 
 # /del
-@app.on_message((filters.me | filters.user(sudoers) ) & filters.command("del"))
+@app.on_message((filters.user(root) | filters.user(sudoers) ) & filters.command("del"))
 async def delete(_, message: Message):
     await message.reply_to_message.delete()
     await message.delete()
 
 # /spam
-@app.on_message(filters.command("spam") & (filters.me | filters.user(sudoers) ))
+@app.on_message(filters.command("spam") & (filters.user(root) | filters.user(sudoers) ))
 async def attack(_, message):
     try:
         if len(message.command) != 2:
@@ -405,7 +405,7 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@app.on_message(filters.me & ~filters.forwarded & ~filters.via_bot & filters.command("l"))
+@app.on_message(filters.user(root) & ~filters.forwarded & ~filters.via_bot & filters.command("l"))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
