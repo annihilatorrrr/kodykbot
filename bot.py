@@ -40,7 +40,7 @@ else:
 
 # some useless shit
 sudoers = SUDO_USERS_ID
-root    = OWNER_USER_ID
+root    = "@kody_k"
 
 # stuff starts here
 # /hello
@@ -311,7 +311,7 @@ async def attack(_, message):
         await message.reply_text(str(e))
 
 # bot protection
-@app.on_message(filters.new_chat_members)
+@app.on_message(filters.new_chat_members & ~filters.chat("@PatheticProgrammers"))
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     new_members = [f"{u.mention}" for u in message.new_chat_members]
