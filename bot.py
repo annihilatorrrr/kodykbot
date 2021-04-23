@@ -186,7 +186,7 @@ ydl_opts = {
     'writethumbnail': True
 }
 
-@app.on_message(filters.command(["dlmusic"]) & (filters.user([sudoers + root])))
+@app.on_message(filters.command("dlmusic") & filters.user(root) | filters.user(sudoers))
 async def music(_, message: Message):
       
     if len(message.command) != 2:
