@@ -43,7 +43,7 @@ Hello NoobCoder, these are some commands you can try with the BOT,
 - A [Telegram bot token](//t.me/botfather).
 
 ### Deploy on Heroku
-[<img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" height="40"/>](https://heroku.com/deploy?template=https://github.com/Kody-K/kodykbot "Heroku")
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Kody-K/kodykbot/)
 
 ## OR
 

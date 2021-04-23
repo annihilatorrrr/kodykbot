@@ -1,35 +1,46 @@
 # importing work here
 from __future__ import unicode_literals
-from pyrogram import Client, filters 
-from pyrogram.types import ChatPermissions
-import wikipedia
 import os
+import sys
+import json
+import wget
+import asyncio
+import pyjokes
+import requests
+import wikipedia
+import traceback
+import youtube_dl
 from os import path
 from time import time
-import pyjokes
-from quoters import Quote
-import requests
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from urllib.parse import urlparse
-import youtube_dl
-import sys
-import traceback
 from io import StringIO
-from inspect import getfullargspec
-import wget
-import json
-import asyncio
+from quoters import Quote
 from datetime import datetime
+from urllib.parse import urlparse
+from inspect import getfullargspec
+from pyrogram import Client, filters 
+from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-from config import bot_token, JSMAPI 
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-# sharing my very sensitive info
-app = Client("kodyk_bot", bot_token=Config.BOT_TOKEN ,
-             api_id=Config.API_ID, api_hash=Config.api_hash,)
+
+is_config = os.path.exists("config.py")
+if is_config:
+    from config import (
+    BOT_TOKEN, OWNER_USER_ID, HEROKU,
+    API_ID as api_id, API_HASH as api_hash, 
+    SUDO_USERS_ID, JSMAPI, WELCOME_DELAY_KICK_SEC
+   )
+
+if not HEROKU:
+    app = Client("kodyk_bot", bot_token=BOT_TOKEN,
+                api_id=api_id, api_hash=api_hash)
+else:
+    app = Client("kodyk_bot_heroku", bot_token=BOT_TOKEN,
+                api_id=api_id, api_hash=api_hash)
 
 # some useless shit
-sudoers = Config.SUDO_USERS_ID
-root    = Config.OWNER_USER_ID
+sudoers = SUDO_USERS_ID
+root    = OWNER_USER_ID
 
 # stuff starts here
 # /hello
@@ -115,7 +126,7 @@ async def shutdown(_, message):
         await message.reply_text("You probably shouldn't do that")
 
 # /cancelshutdown
-@app.on_message(filters.command(['cancelshutdown']) & filters.user(root))
+@app.on_message(filters.command(['cancelshutdown']) & filters.me)
 async def cancelshutdown(_, message):
     if message.from_user.id == root:
         await message.reply_text("Shutting Down Servers Cancelled")
@@ -130,7 +141,7 @@ async def crackjoke(_, message):
     await message.reply_text(joke)
 
 # /homework
-@app.on_message(filters.command(["homework"]) & filters.user(root))
+@app.on_message(filters.command(["homework"]) & filters.me)
 async def homework(_, message):
     try:
         if not message.reply_to_message:
@@ -175,7 +186,7 @@ ydl_opts = {
     'writethumbnail': True
 }
 
-@app.on_message(filters.command(["dlmusic"]) & filters.user(sudoers + root))
+@app.on_message(filters.command(["dlmusic"]) & (filters.me | filters.user(sudoers)))
 async def music(_, message: Message):
       
     if len(message.command) != 2:
@@ -242,7 +253,7 @@ async def song(_, message: Message):
                               performer=ssingers)
 
 # /mute
-@app.on_message(filters.user(sudoers + root) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
+@app.on_message((filters.me | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
 async def mute(_, message):    
     try:
         chat_id = message.chat.id
@@ -257,7 +268,7 @@ async def mute(_, message):
         await message.reply_text(str(e))
 
 # /unmute
-@app.on_message(filters.user(sudoers + root) & ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
+@app.on_message((filters.me | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
 async def unmute(_, message: Message):
     try:
         chat_id = message.chat.id
@@ -280,13 +291,13 @@ async def info(_, message):
         await message.reply_text(str(e))
 
 # /del
-@app.on_message(filters.user(sudoers + root) & filters.command("del"))
+@app.on_message((filters.me | filters.user(sudoers) ) & filters.command("del"))
 async def delete(_, message: Message):
     await message.reply_to_message.delete()
     await message.delete()
 
 # /spam
-@app.on_message(filters.command("spam") & filters.user(sudoers + root))
+@app.on_message(filters.command("spam") & (filters.me | filters.user(sudoers) ))
 async def attack(_, message):
     try:
         if len(message.command) != 2:
@@ -394,7 +405,7 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@app.on_message(filters.user(root) & ~filters.forwarded & ~filters.via_bot & filters.command("l"))
+@app.on_message(filters.me & ~filters.forwarded & ~filters.via_bot & filters.command("l"))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
@@ -448,7 +459,3 @@ async def executor(client, message):
         await edit_or_reply(message, text=final_output)
 
 app.run()
-
-
-
-
