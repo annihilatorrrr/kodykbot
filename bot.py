@@ -23,6 +23,10 @@ from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import bot_token, sudoers, root, WELCOME_DELAY_KICK_SEC, JSMAPI, spammers
 
+# sharing my very sensitive info 
+
+app = Client(bot_token=bot_token)
+
 # stuff starts here
 # /hello
 @app.on_message(filters.command(["start"]))
