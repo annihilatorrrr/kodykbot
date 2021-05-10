@@ -29,7 +29,7 @@ Hello NoobCoder, these are some commands you can try with the BOT,
         Group Management:
         /mutenow Mute a User
         /unmutenow Unmute a User
-        /delete Delete a Message
+        /del Delete a Message
       
 
         Will add more commands soon...
@@ -42,24 +42,18 @@ Hello NoobCoder, these are some commands you can try with the BOT,
 - A [Telegram API key](//docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](//t.me/botfather).
 
-### Deploy on Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Kody-K/kodykbot/)
+## Installation & Usage
 
-## OR
-
-### Manual Installation
-
-```
-$ git clone https://github.com/Kody-K/kodykbot
+```sh
+$ git clone https://github.com/kody-k/kodykbot
 $ cd kodykbot
+```
+
+* Edit `config.ini` to put your `api_id` and `api_hash`
+* Edit `config.py` to put required values and `bot_token` 
+
+```sh
 $ pip3 install -r requirements.txt
-```
-
-Edit some code
-
-#### Usage 
-
-```
 $ python3 bot.py
 ```
 

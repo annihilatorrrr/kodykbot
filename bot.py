@@ -14,33 +14,14 @@ from os import path
 from time import time
 from io import StringIO
 from quoters import Quote
-from datetime import datetime
+from datetime import datetime 
 from urllib.parse import urlparse
 from inspect import getfullargspec
 from pyrogram import Client, filters 
 from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-
-
-is_config = os.path.exists("config.py")
-if is_config:
-    from config import (
-    BOT_TOKEN, OWNER_USER_ID, HEROKU,
-    API_ID as api_id, API_HASH as api_hash, 
-    SUDO_USERS_ID, JSMAPI, WELCOME_DELAY_KICK_SEC
-   )
-
-if not HEROKU:
-    app = Client("kodyk_bot", bot_token=BOT_TOKEN,
-                api_id=api_id, api_hash=api_hash)
-else:
-    app = Client("kodyk_bot_heroku", bot_token=BOT_TOKEN,
-                api_id=api_id, api_hash=api_hash)
-
-# some useless shit
-sudoers = SUDO_USERS_ID
-root    = "@kody_k"
+from config import bot_token, sudoers, root, WELCOME_DELAY_KICK_SEC, JSMAPI, spammers
 
 # stuff starts here
 # /hello
@@ -233,7 +214,7 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 # /saavndl
-@app.on_message(filters.command("saavndl"))
+@app.on_message(filters.command("saavndl") & ~filters.user(spammers))
 async def song(_, message: Message):
     if len(message.command) < 2:
         await message.reply_text("/saavndl requires an argument.")
