@@ -21,7 +21,7 @@ from pyrogram import Client, filters
 from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from config import bot_token, sudoers, root, WELCOME_DELAY_KICK_SEC, JSMAPI, spammers
+from config import bot_token, sudoers, root, WELCOME_DELAY_KICK_SEC, JSMAPI, DEEZERAPI, spammers
 
 # sharing my very sensitive info 
 
@@ -234,8 +234,26 @@ async def song(_, message: Message):
     sname = r.json()[0]['song']
     slink = r.json()[0]['media_url']
     ssingers = r.json()[0]['singers']
-    await message.reply_audio(audio=slink, title=sname,
-                              performer=ssingers)
+    await message.reply_audio(audio=slink, caption=sname)
+
+# /deezerdl
+@app.on_message(filters.command("deezerdl") & ~filters.user(spammers))
+async def song(_, message: Message):
+    if len(message.command) < 2:
+        await message.reply_text("/deezerdl requires an argument.")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = requests.get(f"{DEEZERAPI}{query}")
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    sname = r.json()[0]['song']
+    slink = r.json()[0]['media_url']
+    ssingers = r.json()[0]['singers']
+    await message.reply_audio(audio=slink, caption=sname)
 
 # /mute
 @app.on_message((filters.user(root) | filters.user(sudoers)) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
