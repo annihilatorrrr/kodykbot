@@ -14,7 +14,8 @@ from os import path
 from time import time
 from io import StringIO
 from quoters import Quote
-from datetime import datetime 
+from Python_ARQ import ARQ
+from datetime import datetime
 from urllib.parse import urlparse
 from inspect import getfullargspec
 from pyrogram import Client, filters 
@@ -28,12 +29,12 @@ from config import bot_token, sudoers, root, WELCOME_DELAY_KICK_SEC, JSMAPI, DEE
 app = Client(bot_token=bot_token)
 
 # stuff starts here
-# /hello
+# /start
 @app.on_message(filters.command(["start"]))
 async def start(_, message):
     await message.reply_text(f"Hello {message.from_user.mention}, Send /help to see a list of useless commands.")
 
-# /start 
+# /help 
 @app.on_message(filters.command(["help"]))
 async def help(_, message):
     await message.reply_text('''
@@ -47,7 +48,7 @@ Hello NoobCoder, these are some commands you can try with the BOT,
         /quote Get Quotes
         /crackjoke Get A Geeky Joke
         /stackoverflow Search For Answers in StackOverFlow
-        /dlmusic Download Music from YouTube and SoundCloud  
+        /ytmusic Download Music from YouTube and SoundCloud  
         /saavndl Download Music from JioSaavn (Optimized for Slow Servers)
         /howzdweather Get Weather Report of a City
         
@@ -65,11 +66,6 @@ Hello NoobCoder, these are some commands you can try with the BOT,
         Will add more commands soon...
         ''')
 
-# howztheworld
-@app.on_message(filters.command(["howztheworld"]))
-async def howzwrld(_, message):
-    await message.reply_text("The world is not perfect but it aint that bad...")
-
 # /creator
 @app.on_message(filters.command(["creator"]))
 async def creator(_, message):
@@ -79,11 +75,6 @@ async def creator(_, message):
 @app.on_message(filters.command(["sourcecode"]))
 async def whomadeu(_, message):
     await message.reply_text("https://github.com/Kody-K/kodykbot")
-
-# kill yourself
-@app.on_message(filters.regex("kill yourself"))
-async def killyourself(_, message):
-    await message.reply_text(f"same 2 you {message.from_user.mention}")
 
 # areuded
 @app.on_message(filters.regex("areuded"))
@@ -171,7 +162,7 @@ ydl_opts = {
     'writethumbnail': True
 }
 
-@app.on_message(filters.command("dlmusic") & filters.user(root) | filters.user(sudoers))
+@app.on_message(filters.command("ytmusic") & filters.user(sudoers + root))
 async def music(_, message: Message):
       
     if len(message.command) != 2:
@@ -217,46 +208,82 @@ def get_file_extension_from_url(url):
     basename = os.path.basename(url_path)
     return basename.split(".")[-1]
 
+# Sponsered by ARQ API [-_+]
+arq = ARQ("https://thearq.tech")
+is_downloading = False
 # /saavndl
-@app.on_message(filters.command("saavndl") & ~filters.user(spammers))
-async def song(_, message: Message):
+@app.on_message(filters.command("saavndl") & ~filters.edited)
+@capture_err
+async def jssong(_, message):
+    global is_downloading
     if len(message.command) < 2:
-        await message.reply_text("/saavndl requires an argument.")
+        await message.reply_text("/saavn requires an argument.")
         return
+    if is_downloading:
+        await message.reply_text("Another download is in progress, try again after sometime.")
+        return
+    is_downloading = True
     text = message.text.split(None, 1)[1]
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        r = requests.get(f"{JSMAPI}{query}")
+        songs = await arq.saavn(query)
+        sname = songs[0].song
+        slink = songs[0].media_url
+        ssingers = songs[0].singers
+        await m.edit("Downloading")
+        song = await download_song(slink)
+        await m.edit("Uploading")
+        await message.reply_audio(
+            audio=song,
+            title=sname,
+            performer=ssingers,
+        )
+        os.remove(song)
+        await m.delete()
     except Exception as e:
+        is_downloading = False
         await m.edit(str(e))
         return
-    sname = r.json()[0]['song']
-    slink = r.json()[0]['media_url']
-    ssingers = r.json()[0]['singers']
-    await message.reply_audio(audio=slink, caption=sname)
+    is_downloading = False
 
 # /deezerdl
-@app.on_message(filters.command("deezerdl") & ~filters.user(spammers))
-async def song(_, message: Message):
+@app.on_message(filters.command("deezerdl") & ~filters.edited)
+@capture_err
+async def deezsong(_, message):
+    global is_downloading
     if len(message.command) < 2:
-        await message.reply_text("/deezerdl requires an argument.")
+        await message.reply_text("/deezer requires an argument.")
         return
+    if is_downloading:
+        await message.reply_text("Another download is in progress, try again after sometime.")
+        return
+    is_downloading = True
     text = message.text.split(None, 1)[1]
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        r = requests.get(f"{DEEZERAPI}{query}")
+        songs = await arq.deezer(query, 1)
+        title = songs[0].title
+        url = songs[0].url
+        artist = songs[0].artist
+        await m.edit("Downloading")
+        song = await download_song(url)
+        await m.edit("Uploading")
+        await message.reply_audio(
+            audio=song,
+            title=title,
+            performer=artist,)
+        os.remove(song)
+        await m.delete()
     except Exception as e:
+        is_downloading = False
         await m.edit(str(e))
         return
-    sname = r.json()[0]['song']
-    slink = r.json()[0]['media_url']
-    ssingers = r.json()[0]['singers']
-    await message.reply_audio(audio=slink, caption=sname)
+    is_downloading = False
 
 # /mute
-@app.on_message((filters.user(root) | filters.user(sudoers)) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
+@app.on_message(filters.user(sudoers + root) & ~filters.forwarded & ~filters.via_bot & filters.command("mutenow"))
 async def mute(_, message):    
     try:
         chat_id = message.chat.id
@@ -271,7 +298,7 @@ async def mute(_, message):
         await message.reply_text(str(e))
 
 # /unmute
-@app.on_message((filters.user(root) | filters.user(sudoers) ) & ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
+@app.on_message(filters.user(sudoers + root)& ~filters.forwarded & ~filters.via_bot & filters.command("unmutenow"))
 async def unmute(_, message: Message):
     try:
         chat_id = message.chat.id
@@ -294,7 +321,7 @@ async def info(_, message):
         await message.reply_text(str(e))
 
 # /del
-@app.on_message((filters.user(root) | filters.user(sudoers) ) & filters.command("del"))
+@app.on_message(filters.user(root + sudoers) & filters.command("del"))
 async def delete(_, message: Message):
     await message.reply_to_message.delete()
     await message.delete()

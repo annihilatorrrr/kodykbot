@@ -3,5 +3,3 @@ sudoers = ["@username", 1234567890]
 root = 1057450432
 spammers = [1234567890, 123456789]
 WELCOME_DELAY_KICK_SEC = 300
-JSMAPI = "https://thearq.tech/saavn?query="
-DEEZERAPI = "https://thearq.tech/deezer?query="
