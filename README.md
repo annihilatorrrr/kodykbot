@@ -4,6 +4,8 @@
 
 Just Another Telegram Bot Written In Python Using Pyrogram.
 
+## P.S.: This Repository has a lot of bugs and will probably not work. KodyKBot is currently being rewritten with the motive of improvements, bug fixes and making the source code clean. I will release a stable, bug-free, clean version of KodyKBot in a few weeks(probably). Contact me on [Telegram](https://t.me/kody_k) if you are willing to help.
+
 ### Features
 ```
 Hello NoobCoder, these are some commands you can try with the BOT,
